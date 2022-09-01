@@ -3,7 +3,7 @@ extern crate lalrpop_util;
 
 lalrpop_mod!(
     #[allow(clippy::all)]
-    pub grammar
+    pub(crate) grammar
 );
 
 #[derive(Debug)]
