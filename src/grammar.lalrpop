@@ -39,7 +39,9 @@ Factor: BigInt = {
 
 Power: BigInt = {
     <l:Power> "^" <r:Term> =>? {
-        let r = r.try_into().map_err(|_| CalcError::PowTooLarge)?;
+        let r = r.try_into().map_err(|_| ParseError::User {
+            error: CalcError::PowTooLarge
+        })?;
         Ok(l.pow(r))
     },
     Term,
