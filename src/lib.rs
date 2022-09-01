@@ -52,7 +52,7 @@ mod test {
 
         parser.parse(
                 &mut state,
-                "let b = b ^ 3 + 31490871094829048190438129038901839012839021809320 ^ 10 * (101329013810938920831 ^ 12);",
+                "let b = b ^ 0b11 + 0x158c037f6e1c6c2e2742d8de291705bee517970ea8 ^ 10 * (0o12770707623115152437577 ^ 12);",
             )
             .expect("parse error");
         let res = parser.parse(&mut state, "b;").expect("parse error");

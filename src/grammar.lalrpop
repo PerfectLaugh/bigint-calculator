@@ -1,4 +1,3 @@
-use std::str::FromStr;
 use std::collections::HashMap;
 
 use lalrpop_util::ParseError;
@@ -33,13 +32,13 @@ Expr: BigInt = {
 };
 
 Factor: BigInt = {
-    <l:Factor> "*" <r:Pow> => l * r,
-    <l:Factor> "/" <r:Pow> => l / r,
-    Pow,
+    <l:Factor> "*" <r:Power> => l * r,
+    <l:Factor> "/" <r:Power> => l / r,
+    Power,
 };
 
-Pow: BigInt = {
-    <l:Pow> "^" <r:Term> =>? {
+Power: BigInt = {
+    <l:Power> "^" <r:Term> =>? {
         let r = r.try_into().map_err(|_| CalcError::PowTooLarge)?;
         Ok(l.pow(r))
     },
@@ -56,5 +55,9 @@ Term: BigInt = {
     "(" <Expr> ")",
 };
 
-Num: BigInt =
-    <r"[0-9]+"> => BigInt::from_str(<>).unwrap();
+Num: BigInt = {
+    <r"[0-9]+"> => BigInt::parse_bytes(<>.as_bytes(), 10).unwrap(),
+    <r"0x[0-9a-fA-F]+"> => BigInt::parse_bytes(&<>.as_bytes()[2..], 16).unwrap(),
+    <r"0o[0-7]+"> => BigInt::parse_bytes(&<>.as_bytes()[2..], 8).unwrap(),
+    <r"0b[0-1]+"> => BigInt::parse_bytes(&<>.as_bytes()[2..], 2).unwrap(),
+};
