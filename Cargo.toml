@@ -1,0 +1,9 @@
+[package]
+name = "bigint-calc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+num-bigint = "0.4"
+pest = "2.3"
+pest_derive = "2.3"
