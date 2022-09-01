@@ -1,0 +1,60 @@
+use std::str::FromStr;
+use std::collections::HashMap;
+
+use lalrpop_util::ParseError;
+
+use num_bigint::BigInt;
+
+use super::CalcError;
+
+grammar<'state>(state: &'state mut HashMap<String, BigInt>);
+
+extern {
+    type Error = CalcError;
+}
+
+pub Stmt: Option<BigInt> = {
+    "let" <name: Ident> "=" <value: Expr> ";" => {
+        state.insert(name.to_string(), value);
+        return None;
+    },
+    <Expr> ";" => {
+        return Some(<>);
+    },
+};
+
+Ident: &'input str =
+    <r"[a-z-A-Z][a-zA-Z0-9]*"> => <>;
+
+Expr: BigInt = {
+    <l:Expr> "+" <r:Factor> => l + r,
+    <l:Expr> "-" <r:Factor> => l - r,
+    Factor,
+};
+
+Factor: BigInt = {
+    <l:Factor> "*" <r:Pow> => l * r,
+    <l:Factor> "/" <r:Pow> => l / r,
+    Pow,
+};
+
+Pow: BigInt = {
+    <l:Pow> "^" <r:Term> =>? {
+        let r = r.try_into().map_err(|_| CalcError::PowTooLarge)?;
+        Ok(l.pow(r))
+    },
+    Term,
+};
+
+Term: BigInt = {
+    Num,
+    <Ident> =>? {
+        state.get(<>).cloned().ok_or(ParseError::User {
+            error: CalcError::UnknownVariable(<>.to_string()),
+        })
+    },
+    "(" <Expr> ")",
+};
+
+Num: BigInt =
+    <r"[0-9]+"> => BigInt::from_str(<>).unwrap();
