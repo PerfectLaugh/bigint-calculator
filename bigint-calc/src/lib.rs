@@ -26,6 +26,7 @@ impl Display for CalcError {
 use std::fmt::Display;
 
 pub use grammar::StmtParser as Parser;
+pub use lalrpop_util::ParseError;
 
 #[cfg(test)]
 mod test {

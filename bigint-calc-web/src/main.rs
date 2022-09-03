@@ -1,7 +1,7 @@
 use web_sys::HtmlTextAreaElement;
 use yew::prelude::*;
 
-use bigint_calc::Parser;
+use bigint_calc::{ParseError, Parser};
 use std::{collections::HashMap, ops::Deref};
 
 #[function_component(App)]
@@ -37,7 +37,10 @@ fn app() -> Html {
                     match res {
                         Ok(Some(res)) => result.set(res.to_string()),
                         Ok(None) => result.set("NaN".to_string()),
-                        Err(err) => result.set(err.to_string()),
+                        Err(err) => match err {
+                            ParseError::User { error } => result.set(error.to_string()),
+                            _ => result.set("Syntax error".to_string()),
+                        },
                     }
                 } else {
                     result.set("NaN".to_string());
