@@ -1,0 +1,11 @@
+[package]
+name = "bigint-calc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lalrpop-util = { version = "0.19", features = ["lexer"] }
+num-bigint = "0.4"
+
+[build-dependencies]
+lalrpop = "0.19"

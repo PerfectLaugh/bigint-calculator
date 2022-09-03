@@ -1,2 +1,4 @@
 /target
-Cargo.lock
+/bigint-calc-web/dist
+
+**/.DS_Store
