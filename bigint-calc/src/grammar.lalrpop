@@ -36,7 +36,11 @@ Expr: BigInt = {
 
 Factor: BigInt = {
     <l:Factor> "*" <r:Power> => l * r,
-    <l:Factor> "/" <r:Power> => l / r,
+    <l:Factor> "/" <r:Power> =>? {
+        l.checked_div(&r).ok_or(ParseError::User {
+            error: CalcError::DivisionByZero
+        })
+    },
     Power,
 };
 

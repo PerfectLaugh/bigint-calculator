@@ -10,6 +10,7 @@ lalrpop_mod!(
 pub enum CalcError {
     UnknownVariable(String),
     NotValidPower,
+    DivisionByZero,
 }
 
 impl Display for CalcError {
@@ -17,6 +18,7 @@ impl Display for CalcError {
         match self {
             CalcError::UnknownVariable(var) => write!(f, "Unknown variable: {}", var),
             CalcError::NotValidPower => write!(f, "Not valid power"),
+            CalcError::DivisionByZero => write!(f, "Division by zero"),
         }
     }
 }
