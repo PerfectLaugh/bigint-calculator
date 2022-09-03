@@ -22,14 +22,22 @@ fn app() -> Html {
                 let mut state = HashMap::new();
                 let mut final_res = None;
                 for line in content.split('\n') {
-                    let line = line.trim();
-                    if line.is_empty() {
-                        continue;
-                    }
+                    let mut err = false;
 
-                    let res = parser.parse(&mut state, line);
-                    final_res.replace(res.clone());
-                    if res.is_err() {
+                    for segment in line.split(';') {
+                        let segment = segment.trim();
+                        if segment.is_empty() {
+                            continue;
+                        }
+
+                        let res = parser.parse(&mut state, segment);
+                        final_res.replace(res.clone());
+                        if res.is_err() {
+                            err = true;
+                            break;
+                        }
+                    }
+                    if err {
                         break;
                     }
                 }

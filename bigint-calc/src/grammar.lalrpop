@@ -13,7 +13,7 @@ extern {
 }
 
 pub Stmt: Option<BigInt> = {
-    "let" <name: Ident> "=" <value: Expr> ";" => {
+    "let" <name: Ident> "=" <value: Expr> => {
         state.insert(name.to_string(), value);
         None
     },

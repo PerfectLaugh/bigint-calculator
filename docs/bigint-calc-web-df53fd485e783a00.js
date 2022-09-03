@@ -516,7 +516,7 @@ function initSync(bytes) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('bigint-calc-web-bbedc55d8a6e64ab_bg.wasm', import.meta.url);
+        input = new URL('bigint-calc-web-df53fd485e783a00_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
