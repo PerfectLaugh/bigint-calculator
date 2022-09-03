@@ -6,11 +6,22 @@ lalrpop_mod!(
     pub(crate) grammar
 );
 
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CalcError {
     UnknownVariable(String),
-    PowTooLarge,
+    NotValidPower,
 }
+
+impl Display for CalcError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        match self {
+            CalcError::UnknownVariable(var) => write!(f, "Unknown variable: {}", var),
+            CalcError::NotValidPower => write!(f, "Not valid power"),
+        }
+    }
+}
+
+use std::fmt::Display;
 
 pub use grammar::StmtParser as Parser;
 
@@ -68,6 +79,35 @@ mod test {
                 &[
                     0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+                ]
+            )
+        );
+    }
+
+    #[test]
+    fn test_pass_parse_minus_1() {
+        let parser = Parser::new();
+        let mut state = HashMap::new();
+        parser
+            .parse(&mut state, "let b = -18446744073709551616;")
+            .expect("parse error");
+
+        parser
+            .parse(
+                &mut state,
+                "let b = b ^ 0b11 + -18446744073709551616 ^ 10 * (18446744073709551616 ^ 12 + 10);",
+            )
+            .expect("parse error");
+        let res = parser.parse(&mut state, "b;").expect("parse error");
+        assert_eq!(
+            res.expect("no result"),
+            BigInt::from_slice(
+                Sign::Plus,
+                &[
+                    0, 0, 0, 0, 0, 0, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295,
+                    4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295,
+                    4294967295, 4294967295, 4294967295, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
                 ]
             )
         );

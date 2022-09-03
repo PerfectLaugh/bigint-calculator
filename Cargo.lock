@@ -51,6 +51,7 @@ name = "bigint-calc-web"
 version = "0.1.0"
 dependencies = [
  "bigint-calc",
+ "web-sys",
  "yew",
 ]
 

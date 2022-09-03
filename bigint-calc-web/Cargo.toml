@@ -6,3 +6,7 @@ edition = "2021"
 [dependencies]
 yew = "0.19"
 bigint-calc = { path = "../bigint-calc" }
+
+
+[dependencies.web-sys]
+version = "0.3"

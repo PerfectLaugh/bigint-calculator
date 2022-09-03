@@ -20,10 +20,13 @@ pub Stmt: Option<BigInt> = {
     <Expr> ";" => {
         Some(<>)
     },
+    <Expr> => {
+        Some(<>)
+    },
 };
 
 Ident: &'input str =
-    <r"[a-z-A-Z][a-zA-Z0-9]*"> => <>;
+    <r"[a-zA-Z][a-zA-Z0-9]*"> => <>;
 
 Expr: BigInt = {
     <l:Expr> "+" <r:Factor> => l + r,
@@ -40,7 +43,7 @@ Factor: BigInt = {
 Power: BigInt = {
     <l:Power> "^" <r:Term> =>? {
         let r = r.try_into().map_err(|_| ParseError::User {
-            error: CalcError::PowTooLarge
+            error: CalcError::NotValidPower
         })?;
         Ok(l.pow(r))
     },
@@ -58,8 +61,8 @@ Term: BigInt = {
 };
 
 Num: BigInt = {
-    <r"[0-9]+"> => BigInt::parse_bytes(<>.as_bytes(), 10).unwrap(),
-    <r"0x[0-9a-fA-F]+"> => BigInt::parse_bytes(&<>.as_bytes()[2..], 16).unwrap(),
-    <r"0o[0-7]+"> => BigInt::parse_bytes(&<>.as_bytes()[2..], 8).unwrap(),
-    <r"0b[0-1]+"> => BigInt::parse_bytes(&<>.as_bytes()[2..], 2).unwrap(),
+    <r"-?[0-9]+"> => BigInt::parse_bytes(<>.as_bytes(), 10).unwrap(),
+    <r"-?0x[0-9a-fA-F]+"> => BigInt::parse_bytes(&<>.replace("0x", "").as_bytes(), 16).unwrap(),
+    <r"-?0o[0-7]+"> => BigInt::parse_bytes(&<>.replace("0o", "").as_bytes(), 8).unwrap(),
+    <r"-?0b[0-1]+"> => BigInt::parse_bytes(&<>.replace("0b", "").as_bytes(), 2).unwrap(),
 };
